@@ -7,14 +7,15 @@ using namespace std;
 
 int main()
 {
-	string str, strHalf;
+	string str, temp;
 	cin >> str;
 	
-	strHalf = str;
-	reverse(strHalf.begin(), strHalf.end());
-	if (strHalf == str)
+	temp = str;
+	reverse(temp.begin(), temp.end());
+	if (temp == str)
 		cout << 1 << "\n";
 	else
 		cout << 0 << "\n";
 
+	return 0;
 }
