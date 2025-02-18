@@ -1,62 +1,43 @@
 #include <iostream>
+#include <algorithm>
 #include <vector>
 #include <string>
-#include <algorithm>
-#include <cmath>
 using namespace std;
 
+string str, result;
+char mid;
+int iCount[200], flag;
 int main()
 {
-	string strInput;
-	vector<pair<char, int>> vAlpha;
-	for (int i = 0; i < 26; ++i)
-	{
-		vAlpha.push_back({ 'A' + i, 0 });
-	}
-	cin >> strInput;
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
 
-	for (int i = 0; i < strInput.size(); ++i)
+	cin >> str;
+	for (char a : str) iCount[a]++;
+	for (int i = 'Z'; i >= 'A'; --i)
 	{
-		for (int j = 0; j < vAlpha.size(); ++j)
+		if (iCount[i])
 		{
-			if (strInput[i] == vAlpha[j].first)
+			if (iCount[i] & 1) //  홀수일 경우
 			{
-				vAlpha[j].second++;
+				mid = char(i);
+				flag++;
+				iCount[i]--;
+			}
+			if (flag == 2)break;
+			for (int j = 0; j < iCount[i]; j += 2)
+			{
+				result = char(i) + result;
+				result += char(i);
 			}
 		}
 	}
-	//팰린드롬 가능한지 체크 ABCCBBA   ABCBCBA
-	int holsu = 0; char center;
-	for (int i = 0; i < vAlpha.size(); ++i)
-	{
-		if (vAlpha[i].second % 2 == 1)
-		{
-			++holsu;
-			center = vAlpha[i].first;
-		}
-	}
-	if (holsu >= 2 )
-	{
-		cout << "I'm Sorry Hansoo";
-		return 0;
-	}
 
-	for (int i = 0; i < vAlpha.size(); ++i)
-	{
-		for (int j = 0; j < vAlpha[i].second / 2; ++j)
-		{
-			cout << vAlpha[i].first;
-		}
-	}
-	if(holsu)
-		cout << center;
-	for (int i = vAlpha.size()-1; i >= 0; --i)
-	{
-		for (int j = 0; j < vAlpha[i].second / 2; ++j)
-		{
-			cout << vAlpha[i].first;
-		}
-	}
+	if (mid) result = result.substr(0, result.size() / 2) + mid + result.substr(result.size() / 2);
+	if (flag == 2) cout << "I'm Sorry Hansoo";
+	else cout << result;
+
 
 	return 0;
 }
