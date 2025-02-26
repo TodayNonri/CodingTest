@@ -19,14 +19,11 @@ int main()
     stack<int> st;
     int iResult = 2147483647;
     int iCount = 0;
-    int iStart = 1;
 
     int iLeft = 1;
-    int iRight = 1;
     for (int i = 1; i <= N; ++i)
     {
         cin >> v[i];
-        iRight = i;
         vSum[i] = vSum[i - 1] + v[i];
 
         if (vSum[i] >= S)
@@ -36,7 +33,7 @@ int main()
                 vSum[i] -= v[iLeft];
                 iLeft++;
             }
-            iCount = iRight - iLeft + 2;
+            iCount = i - iLeft + 2;
             iResult = min(iCount, iResult);
         }
     }
