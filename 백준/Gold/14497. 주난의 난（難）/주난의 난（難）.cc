@@ -65,8 +65,6 @@ int main()
         }
     }
 
-
-
     int iCount = 0;
     while (true)
     {
@@ -85,7 +83,6 @@ int main()
         vFriendPos.clear();
         memset(visited, 0, sizeof(visited));
     }
-
 
     return 0;
 }
