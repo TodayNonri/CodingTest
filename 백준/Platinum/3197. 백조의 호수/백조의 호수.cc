@@ -9,13 +9,12 @@ using namespace std;
 
 #define MAX_V 1500
 int R, C;
-bool visited[MAX_V][MAX_V];  // ✅ vector → 배열로 변경 (메모리 절약)
+bool visited[MAX_V][MAX_V];
 char water[MAX_V][MAX_V];
 vector<pair<int, int>> vSwan;
-list<pair<int, int>> vWall;
 queue<pair<int, int>> position;
 
-const int dy[4] = {-1, 0, 1, 0};
+const int dy[4] = { -1, 0, 1, 0 };
 const int dx[4] = { 0, 1, 0, -1 };
 
 int main()
@@ -25,7 +24,7 @@ int main()
 
     cin >> R >> C;
 
-    queue<pair<int, int>> waterQueue; // ✅ 녹일 얼음 위치 저장용 큐
+    queue<pair<int, int>> qWater;
     for (int i = 0; i < R; ++i)
     {
         string strInput;
@@ -34,7 +33,7 @@ int main()
         {
             water[i][j] = strInput[j];
             if (water[i][j] == 'L') vSwan.push_back({ i, j });
-            if (water[i][j] != 'X') waterQueue.push({ i, j }); // ✅ 물 위치 저장
+            if (water[i][j] != 'X') qWater.push({ i, j });
         }
     }
 
@@ -63,22 +62,21 @@ int main()
                 int ny = y + dy[i];
                 int nx = x + dx[i];
                 if (ny < 0 || nx < 0 || ny >= R || nx >= C || visited[ny][nx]) continue;
-                
+
                 visited[ny][nx] = true;
                 if (water[ny][nx] == 'X')
-                    positionTemp.push({ ny, nx }); // 다음 탐색을 위해 저장
+                    positionTemp.push({ ny, nx });
                 else
                     position.push({ ny, nx });
             }
         }
 
-        // ✅ 물 확장 (얼음 녹이기)
-        int waterSize = waterQueue.size();
+        int waterSize = qWater.size();
         while (waterSize--)
         {
-            int y = waterQueue.front().first;
-            int x = waterQueue.front().second;
-            waterQueue.pop();
+            int y = qWater.front().first;
+            int x = qWater.front().second;
+            qWater.pop();
 
             for (int i = 0; i < 4; ++i)
             {
@@ -88,7 +86,7 @@ int main()
                 if (water[ny][nx] == 'X')
                 {
                     water[ny][nx] = '.';
-                    waterQueue.push({ ny, nx });
+                    qWater.push({ ny, nx });
                 }
             }
         }
