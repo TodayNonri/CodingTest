@@ -1,5 +1,4 @@
 #include <iostream>
-#include <queue>
 #include <vector>
 #include <string>
 #include <cstring>
@@ -8,7 +7,6 @@ using namespace std;
 
 #define MAX_V 20
 int R, C;
-bool visited[MAX_V][MAX_V];
 char Board[MAX_V][MAX_V];
 
 const int dy[4] = { -1, 0, 1, 0 };
@@ -16,7 +14,7 @@ const int dx[4] = { 0, 1, 0, -1 };
 string strAlpha = "";
 int iMax = 0;
 
-void bfs(int y, int x, int count)
+void dfs(int y, int x, int count)
 {
     iMax = max(iMax, count);
 
@@ -31,7 +29,7 @@ void bfs(int y, int x, int count)
             continue;
 
         strAlpha += string(1, Board[ny][nx]);
-        bfs(ny, nx, count+1);
+        dfs(ny, nx, count+1);
         strAlpha.pop_back();
     }
 }
@@ -50,13 +48,10 @@ int main()
         for (int j = 0; j < C; ++j)
             Board[i][j] = strInput[j];
     }
-
-    visited[0][0] = 1;
     strAlpha += string(1, Board[0][0]);
-    bfs(0, 0, 1);
+    dfs(0, 0, 1);
 
     cout << iMax << "\n";
-
 
     return 0;
 }
