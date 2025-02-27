@@ -3,7 +3,6 @@
 #include <string>
 #include <algorithm>
 
-
 using namespace std;
 
 vector<char> vStr;
@@ -13,12 +12,7 @@ bool visited[10] = { false,  };
 
 bool dfs(int here, int count, vector<int>& vPrev)
 {
-    //cout << count << endl;
     vPrev.push_back(v[here]);
-
-    /*for (auto i : vPrev)
-        cout << i;
-    cout << endl;*/
 
     if (count == k)
     {
@@ -57,7 +51,6 @@ int main()
     ios_base::sync_with_stdio(false);
     cin.tie(NULL); cout.tie(NULL);
 
-
     cin >> k;
     vStr.resize(k);
     v.resize(10);
@@ -77,9 +70,7 @@ int main()
         vector<int> vPrev;
         visited[v[i]] = true;
         if (dfs(i, 0, vPrev))
-        {
             break;
-        }
         visited[v[i]] = false;
     }
     cout << "\n";
@@ -90,9 +81,7 @@ int main()
         vector<int> vPrev;
         visited[v[i]] = true;
         if (dfs(i, 0, vPrev))
-        {
             break;
-        }
         visited[v[i]] = false;
     }
 
