@@ -26,7 +26,7 @@ int main()
         int iNum;
         cin >> iNum;
         auto LowerPos = lower_bound(lis, lis + iLen, iNum);
-        int iPos = (int)(lower_bound(lis, lis + iLen, iNum) - lis);
+        int iPos = (int)(LowerPos - lis);
         if (*LowerPos == 1000000004) 
             iLen++;
 
