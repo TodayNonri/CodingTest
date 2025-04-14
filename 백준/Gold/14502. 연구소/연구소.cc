@@ -68,22 +68,26 @@ int main()
 	}
 
 
-	for (int i = 0; i < walliList.size(); ++i)
-	{
-		for (int j = 0; j < i; ++j)
-		{
-			for (int k = 0; k < j; ++k)
-			{
-				arr[walliList[i].first][walliList[i].second] = 1;
-				arr[walliList[j].first][walliList[j].second] = 1;
-				arr[walliList[k].first][walliList[k].second] = 1;
-				iResult = max(iResult, solve());
-				arr[walliList[i].first][walliList[i].second] = 0;
-				arr[walliList[j].first][walliList[j].second] = 0;
-				arr[walliList[k].first][walliList[k].second] = 0;
-			}
-		}
-	}
+for (int i = 0; i < walliList.size(); ++i)
+{
+    for (int j = i + 1; j < walliList.size(); ++j)
+    {
+        for (int k = j + 1; k < walliList.size(); ++k)
+        {
+            // 서로 다른 위치에 벽 세우기
+            arr[walliList[i].first][walliList[i].second] = 1;
+            arr[walliList[j].first][walliList[j].second] = 1;
+            arr[walliList[k].first][walliList[k].second] = 1;
+
+            iResult = max(iResult, solve());
+
+            // 원상복구
+            arr[walliList[i].first][walliList[i].second] = 0;
+            arr[walliList[j].first][walliList[j].second] = 0;
+            arr[walliList[k].first][walliList[k].second] = 0;
+        }
+    }
+}
 
 	cout << iResult << "\n";
 
