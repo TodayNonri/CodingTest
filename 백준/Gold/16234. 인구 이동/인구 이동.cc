@@ -1,111 +1,82 @@
 #include <iostream>
-#include <vector>
-#include <queue>
 #include <algorithm>
-#include <cmath>
+#include <vector>
 
 using namespace std;
 
-int N, L, R, iResult = 0;
-int Country[50][50];
-bool Visited[50][50];
-int dy[4] = { -1, 0, 1, 0 };
-int dx[4] = { 0, 1, 0, -1 };
+int N, L, R;
+int iSum = 0;
+int board[51][51];
+bool visited[51][51];
+vector<pair<int, int>>v;
 
-bool MovePeople(int sy, int sx, vector<pair<int, int>>& vConnected, int& iSum)
+const int dy[] = { -1, 0, 1, 0 };
+const int dx[] = { 0, 1, 0, -1 };
+
+void DFS(int y, int x, vector<pair<int, int>>& v)
 {
-    queue<pair<int, int>> q;
-    q.push({ sy, sx });
-    Visited[sy][sx] = true;
-
-    vConnected.push_back({ sy, sx });
-    iSum = Country[sy][sx];
-    int iCount = 1;
-    bool bMoved = false;
-
-    while (!q.empty())
+    for (int i = 0; i < 4; ++i)
     {
-        int y = q.front().first;
-        int x = q.front().second;
-        q.pop();
-
-        for (int i = 0; i < 4; ++i)
+        int ny = y + dy[i];
+        int nx = x + dx[i];
+        if (ny < 0 || nx < 0 || ny >= N || nx >= N || visited[ny][nx])
+            continue;
+        if (abs(board[ny][nx] - board[y][x]) >= L && abs(board[ny][nx] - board[y][x]) <= R)
         {
-            int ny = y + dy[i];
-            int nx = x + dx[i];
-
-            if (ny < 0 || nx < 0 || ny >= N || nx >= N || Visited[ny][nx])
-                continue;
-
-            int diff = abs(Country[y][x] - Country[ny][nx]);
-            if (diff >= L && diff <= R)
-            {
-                Visited[ny][nx] = true;
-                q.push({ ny, nx });
-                vConnected.push_back({ ny, nx });
-                iSum += Country[ny][nx];
-                iCount++;
-                bMoved = true;
-            }
+            visited[ny][nx] = true;
+            v.push_back({ ny, nx });
+            iSum += board[ny][nx];
+            DFS(ny, nx, v);
         }
     }
-
-    return bMoved;
 }
 
 int main()
 {
     ios_base::sync_with_stdio(false);
-    cin.tie(NULL); cout.tie(NULL);
+    cin.tie(NULL);   cout.tie(NULL);
 
     cin >> N >> L >> R;
+
     for (int i = 0; i < N; ++i)
     {
         for (int j = 0; j < N; ++j)
-        {
-            cin >> Country[i][j];
-        }
+            cin >> board[i][j];
     }
-
+    bool bEnd = false;
+    int iCount = 0;
     while (true)
     {
-        bool bFlag = false;
-        fill(&Visited[0][0], &Visited[0][0] + 50 * 50, false);
-        vector<vector<pair<int, int>>> vConnectedList;
-        vector<int> vAverages;
+        bEnd = false;
+        fill(&visited[0][0], &visited[0][0] + 51 * 51, false);
 
         for (int i = 0; i < N; ++i)
         {
             for (int j = 0; j < N; ++j)
             {
-                if (!Visited[i][j])
+                if (!visited[i][j])
                 {
-                    vector<pair<int, int>> vConnected;
-                    int iSum = 0;
-
-                    if (MovePeople(i, j, vConnected, iSum))
-                    {
-                        bFlag = true;
-                        vConnectedList.push_back(vConnected);
-                        vAverages.push_back(iSum / vConnected.size());
+                    v.clear();
+                    visited[i][j] = true;
+                    v.push_back({ i, j });
+                    iSum = board[i][j];
+                    DFS(i, j, v);
+                    if (v.size() == 1)
+                        continue;
+                    for (pair<int, int>b : v)
+                    {   
+                        board[b.first][b.second] = iSum / v.size();
+                        bEnd = true;
                     }
                 }
             }
         }
-        if (!bFlag) break;
-
-        for (size_t i = 0; i < vConnectedList.size(); ++i)
-        {
-            for (auto pos : vConnectedList[i])
-            {
-                Country[pos.first][pos.second] = vAverages[i];
-            }
-        }
-
-        iResult++;
+        if (!bEnd)
+            break;
+        iCount++;
     }
 
-    cout << iResult;
+    cout << iCount;
 
     return 0;
 }
