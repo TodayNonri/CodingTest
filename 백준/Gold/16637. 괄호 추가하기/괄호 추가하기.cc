@@ -1,65 +1,63 @@
 #include <iostream>
-#include <vector>
-#include <queue>
 #include <algorithm>
+#include <vector>
+#include <climits>
+
 
 using namespace std;
-
-int N, iResult = -2147483647;
-string str;
 
 vector<int> vNum;
 vector<char> vOper;
 
-int Cal(char c, int a, int b)
+int N;
+int iResult = -987654321;
+
+int oper(char a, int b, int c)
 {
-    if (c == '+')
-        return a + b;
-    if (c == '-')
-        return a - b;
-    if (c == '*')
-        return a * b;
+    if (a == '+')
+        return b + c;
+    if (a == '-')
+        return b - c;
+    if (a == '*')
+        return b * c;
 }
 
-void Func(int iHere, int iNum)
+void Go(int iHere, int iNum)
 {
     if (iHere == vNum.size() - 1)
     {
         iResult = max(iResult, iNum);
         return;
     }
+    Go(iHere + 1, oper(vOper[iHere], iNum, vNum[iHere + 1]));
 
-    Func(iHere + 1, Cal(vOper[iHere], iNum, vNum[iHere + 1]));
-    
-    if (iHere + 2 <= vNum.size() - 1) 
+    if (iHere + 2 <= vNum.size() - 1)
     {
-        int temp = Cal(vOper[iHere + 1], vNum[iHere + 1], vNum[iHere + 2]);
-        Func(iHere + 2, Cal(vOper[iHere], iNum, temp));
+        int temp = oper(vOper[iHere + 1], vNum[iHere + 1], vNum[iHere + 2]);
+        Go(iHere + 2, oper(vOper[iHere], iNum, temp));
     }
-
     return;
 }
 
 int main()
 {
     ios_base::sync_with_stdio(false);
-    cin.tie(NULL); cout.tie(NULL);
-
+    cin.tie(NULL);   cout.tie(NULL);
     cin >> N;
-    cin >> str;
 
-    bool isNum = true;
+    string strInput;
+    cin >> strInput;
     for (int i = 0; i < N; ++i)
     {
-        if (isNum)
-            vNum.push_back(str[i] - '0');
+        if (i % 2 == 0)
+            vNum.push_back(strInput[i] - '0');
         else
-            vOper.push_back(str[i]);
-
-        isNum = !isNum;
+            vOper.push_back(strInput[i]);
     }
-    Func(0, vNum[0]);
-    cout << iResult;
 
+    Go(0, vNum[0]);
+    
+    cout << iResult;
+    
     return 0;
 }
