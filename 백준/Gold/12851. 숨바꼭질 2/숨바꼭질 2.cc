@@ -1,73 +1,49 @@
 #include <iostream>
-#include <vector>
-#include <queue>
 #include <algorithm>
+#include <vector>
 #include <climits>
+#include <queue>
 
 using namespace std;
 
-int N, K, iMin = INT_MAX, iCount = 0;
-int visit[200'002];
-
-int Cal(int iNum, int iCategory)
-{
-    if (iCategory == 0) 
-        return iNum + 1;
-    if (iCategory == 1) 
-        return iNum - 1;
-    if (iCategory == 2) 
-        return iNum * 2;
-    
-    return iNum;
-}
+int N, K;
+int visited[1000001];
+int cnt[1000001];
 
 int main()
 {
     ios_base::sync_with_stdio(false);
-    cin.tie(NULL); cout.tie(NULL);
-
-    cin >> N >> K;
-
-    fill(visit, visit + 200002, INT_MAX); 
-    visit[N] = 0; 
-
+    cin.tie(NULL);   cout.tie(NULL);
+    cin >> N>> K;
+    
     queue<int> q;
     q.push(N);
-
+    visited[N] = 1;
+    cnt[N] = 1;
     while (!q.empty())
     {
-        int iNum = q.front();
+        int here = q.front();
         q.pop();
-
-        if (iNum == K)
+        for (auto i : { here - 1, here + 1, here * 2 })
         {
-            if (visit[iNum] < iMin)
-            {
-                iMin = visit[iNum];
-                iCount = 1;  
-            }
-            else if (visit[iNum] == iMin)
-            {
-                iCount++;  
-            }
-            continue;
-        }
-
-        for (int i = 0; i < 3; ++i)
-        {
-            int val = Cal(iNum, i);
-            if (val < 0 || val > 200000) 
+            if (i > 100000 || i < 0)
                 continue;
-
-            if (visit[val] == INT_MAX || visit[val] == visit[iNum] + 1)
+            if (!visited[i])
             {
-                visit[val] = visit[iNum] + 1;
-                q.push(val);
+                q.push(i);
+                visited[i] = visited[here] + 1;
+                cnt[i] += cnt[here];
             }
+            else if (visited[i] == visited[here] + 1)
+            {
+                cnt[i] += cnt[here];
+            }
+            
         }
     }
 
-    cout << iMin << "\n" << iCount;
-
+    cout << visited[K] - 1 << "\n";
+    cout << cnt[K];
+    
     return 0;
 }
