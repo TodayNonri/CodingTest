@@ -1,88 +1,83 @@
 #include <iostream>
-#include <queue>
+#include <algorithm>
 #include <vector>
-#include <string> 
-#include <cstring> 
+#include <climits>
+#include <queue>
 
 using namespace std;
 
-#define MAX_V 300
-int N, M;
-int iStartY, iStartX, iGoalY, iGoalX;
-char room[MAX_V][MAX_V];
-int visited[MAX_V][MAX_V] = { 0, };
-const int dy[4] = { -1, 0, 1, 0 };
-const int dx[4] = { 0, 1, 0, -1 };
-
-vector<pair<int, int>> vFriendPos;
-bool bfs(int y, int x)
-{
-    if (y == iGoalY - 1 && x == iGoalX-1)
-    {
-        return true;
-    }
-
-    for (int i = 0; i < 4; ++i)
-    {
-        int ny = y + dy[i];
-        int nx = x + dx[i];
-        if (ny < 0 || nx < 0 || ny >= N || nx >= M)
-            continue;
-
-        if (visited[ny][nx])
-            continue;
-
-        if (room[ny][nx] == '1')
-        {
-            vFriendPos.push_back({ ny, nx });
-            continue;
-        }
-        else 
-        {
-            visited[ny][nx] = visited[y][x] + 1;
-            if (bfs(ny, nx) == true)
-                return true;
-        }
-    }
-    return false;
-}
-
+int board[301][301];
+bool visited[301][301];
+int Y1, X1, Y2, X2;
+const int dy[] = { -1, 0, 1, 0 };
+const int dx[] = { 0, 1, 0, -1 };
 int main() 
 {
-    ios_base::sync_with_stdio(false);
-    cin.tie(NULL); cout.tie(NULL);
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int N, M;
 
     cin >> N >> M;
-    cin >> iStartY >> iStartX >> iGoalY >> iGoalX;
-    
+    cin >> Y1 >> X1 >> Y2 >> X2;
+    Y1 -= 1;
+    X1 -= 1;
+    Y2 -= 1;
+    X2 -= 1;
     string strInput;
     for (int i = 0; i < N; ++i)
     {
         cin >> strInput;
-        for (int j = 0; j < strInput.size(); ++j)
-        {
-            room[i][j] = strInput[j];
-        }
+        for (int j = 0; j < M; ++j)
+            board[i][j] = strInput[j] - '0';
     }
 
+
+    queue<pair<int, int>> q;
     int iCount = 0;
+
     while (true)
     {
-        iCount++;
-        visited[iStartY - 1][iStartX - 1] = 1;
-        if (bfs(iStartY - 1, iStartX - 1) == true)
+        fill(&visited[0][0], &visited[0][0] + 301 * 301, false);
+        q.push({ Y1, X1 });
+        visited[Y1][X1] = true;
+        bool bFind = false;
+        while (!q.empty())
         {
-            cout << iCount << "\n";
-            return 0;
+            int y = q.front().first;
+            int x = q.front().second;
+            q.pop();
+            
+            for (int i = 0; i < 4; ++i)
+            {
+                int ny = y + dy[i];
+                int nx = x + dx[i];
+                if (ny < 0 || nx < 0 || ny >= N || nx >= M)
+                    continue;
+                if (visited[ny][nx])
+                    continue;
+                if (board[ny][nx] == 1)
+                {
+                    visited[ny][nx] = true;
+                    board[ny][nx] = 0;
+                    continue;
+                }
+                if (ny == Y2 && nx == X2)
+                {
+                    bFind = true;
+                    break;
+                }
+                visited[ny][nx] = true;
+                q.push({ ny, nx });
+            }
+            if (bFind)
+                break;
         }
-
-        for (pair<int, int> p : vFriendPos)
-        {
-            room[p.first][p.second] = '0';
-        }
-        vFriendPos.clear();
-        memset(visited, 0, sizeof(visited));
+        ++iCount;
+        if (bFind)
+            break;
     }
 
+    cout << iCount;
     return 0;
 }
