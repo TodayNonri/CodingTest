@@ -1,57 +1,52 @@
 #include <iostream>
+#include <algorithm>
 #include <vector>
-#include <string>
 #include <cstring>
+#include <map>
+
 
 using namespace std;
+const int MAX_N = 20;
+const int dx[4] = { 1, 0, -1, 0 };
+const int dy[4] = { 0, 1, 0, -1 };
+char board[MAX_N][MAX_N];
+bool visited[MAX_N][MAX_N];
+int R, C, iResult = 1;
 
-#define MAX_V 20
-int R, C;
-char Board[MAX_V][MAX_V];
-
-const int dy[4] = { -1, 0, 1, 0 };
-const int dx[4] = { 0, 1, 0, -1 };
-string strAlpha = "";
-int iMax = 0;
-
-void dfs(int y, int x, int count)
+void dfs(int y, int x, int used, int len)
 {
-    iMax = max(iMax, count);
-
-    for (int i = 0; i < 4; ++i)
+    iResult = max(iResult, len);
+    for (int d = 0; d < 4; ++d)
     {
-        int ny = y + dy[i];
-        int nx = x + dx[i];
-
-        if (ny < 0 || nx < 0 || ny >= R || nx >= C)
+        int ny = y + dy[d];
+        int nx = x + dx[d];
+        if (ny < 0 || nx < 0 || ny >= R || nx >= C) 
             continue;
-        if (strAlpha.find(Board[ny][nx]) != string::npos)
+        int bit = 1 << (board[ny][nx] - 'A');
+        if (used & bit) 
             continue;
-
-        strAlpha += string(1, Board[ny][nx]);
-        dfs(ny, nx, count+1);
-        strAlpha.pop_back();
+        dfs(ny, nx, used | bit, len + 1);
     }
 }
 
 int main()
 {
     ios_base::sync_with_stdio(false);
-    cin.tie(NULL); cout.tie(NULL);
+    cin.tie(NULL);    cout.tie(NULL);
 
     cin >> R >> C;
-
+    string strInput;
     for (int i = 0; i < R; ++i)
     {
-        string strInput;
         cin >> strInput;
         for (int j = 0; j < C; ++j)
-            Board[i][j] = strInput[j];
+            board[i][j] = strInput[j];
     }
-    strAlpha += string(1, Board[0][0]);
-    dfs(0, 0, 1);
 
-    cout << iMax << "\n";
+    int startBit = 1 << (board[0][0] - 'A');
+    dfs(0, 0, startBit, 1);
 
+    cout << iResult;
+    
     return 0;
 }
