@@ -1,54 +1,54 @@
 #include <iostream>
-#include <vector>
 #include <algorithm>
-#include <math.h>
+#include <vector>
+#include <cstring>
 
 using namespace std;
+int node[1025];
+vector<int> vResult[14];
 
 int K;
-vector<int> vTree[10];
-vector<int> vNum;
+int iNumber;
 
-void CutNum(int iCenter, int iDepth, vector<int>& v)
+void preOder(int iStart, int iEnd, int iLevel)
 {
-    if (v.size() == 0)
+    if (iStart > iEnd)
         return;
+    if (iStart == iEnd)
+    {
+        vResult[iLevel].push_back(node[iStart]);
+        return;
+    }
 
-    vTree[iDepth].push_back(v[iCenter]);
-
-    vector<int> vLeft;
-    vector<int> vRight;
-    for (int i = 0; i < iCenter; ++i)
-        vLeft.push_back(v[i]);
-    CutNum(vLeft.size() / 2, iDepth + 1, vLeft);
-
-    for (size_t i = iCenter+1; i < v.size(); ++i)
-        vRight.push_back(v[i]);
-    CutNum(vRight.size() / 2, iDepth + 1, vRight);
-
+    int iMid = (iStart + iEnd) / 2;
+    vResult[iLevel].push_back(node[iMid]);
+    preOder(iStart, iMid - 1, iLevel + 1);
+    preOder(iMid + 1, iEnd, iLevel + 1);
     return;
 }
+
+
 int main()
 {
     ios_base::sync_with_stdio(false);
-    cin.tie(NULL); cout.tie(NULL);
-
+    cin.tie(NULL);    cout.tie(NULL);
     cin >> K;
-    int N = pow(2, K)-1;
-    vNum.resize(N);
-    for (int i = 0; i < N; ++i)
-        cin >> vNum[i];
-    
-    int iCenter = (N / 2);
+    int c = 0;
+    iNumber = (1 << K) - 1;
 
-    CutNum(iCenter, 0, vNum);
-
-    for (int i = 0; i < K; ++i)
+    for (int i = 0; i < iNumber; ++i)
     {
-        for (auto j : vTree[i])
-            cout << j <<" ";
-        cout<<"\n";
+        cin >> node[i];
     }
 
+    preOder(0, iNumber, 1);
+
+    for (int i = 1; i <= K; ++i)
+    {
+        for (auto& j : vResult[i])
+            cout << j << " ";
+        cout << "\n";
+    }
+    
     return 0;
 }
