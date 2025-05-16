@@ -1,88 +1,94 @@
 #include <iostream>
+#include <algorithm>
 #include <vector>
 #include <climits>
-#include <cstring>
 
 using namespace std;
-
 int N, iResult = INT_MAX;
-bool visited[11][11] = { false };
-int price[11][11] = { 0, };
-const int dy[4] = { -1, 0, 1, 0 };
-const int dx[4] = { 0, 1, 0, -1 };
+bool visited[11][11];
+int board[11][11];
+const int dy[] = { -1, 0, 1, 0 };
+const int dx[] = { 0, 1, 0, -1 };
 
-void Flower(int y, int x, int iCount, int iPrice)
+bool Check(int y, int x)
 {
-    visited[y][x] = true;
-
-    bool bCheck = true;
-    vector<pair<int, int>> flowerPos;
-    flowerPos.push_back({ y, x });
+    if (visited[y][x])
+        return false;
 
     for (int i = 0; i < 4; ++i)
     {
         int ny = y + dy[i];
         int nx = x + dx[i];
-        if (ny < 0 || nx < 0 || ny >= N || nx >= N || visited[ny][nx])
-        {
-            bCheck = false;
-            break;
-        }
-        flowerPos.push_back({ ny, nx });
+        if (ny < 0 || nx < 0 || ny >= N || nx >= N)
+            return false;
+        if (visited[ny][nx])
+            return false;
     }
 
-    if (!bCheck)
+    return true;
+}
+
+int SumFlower(int y, int x)
+{
+    int iSum = board[y][x];
+    visited[y][x] = true;
+    for (int i = 0; i < 4; ++i)
     {
-        visited[y][x] = false;
+        int ny = y + dy[i];
+        int nx = x + dx[i];
+        iSum += board[ny][nx];
+        visited[ny][nx] = true;
+    }
+    return iSum;
+}
+
+void DeleteFlower(int y, int x)
+{
+    int iSum = board[y][x];
+    visited[y][x] = false;
+    for (int i = 0; i < 4; ++i)
+    {
+        int ny = y + dy[i];
+        int nx = x + dx[i];
+        visited[ny][nx] = false;
+    }
+}
+
+void Flower(int iCount, int iSum)
+{
+    if (iCount == 3)
+    {
+        iResult = min(iResult, iSum);
         return;
     }
 
-    for (auto& p : flowerPos)
+    for (int i = 0; i < N; ++i)
     {
-        visited[p.first][p.second] = true;
-        iPrice += price[p.first][p.second];
-    }
-
-    if (iCount == 2)
-    {
-        iResult = min(iPrice, iResult);
-    }
-    else
-    {
-        for (int i = 1; i < N - 1; ++i)
+        for (int j = 0; j < N; ++j)
         {
-            for (int j = 1; j < N - 1; ++j)
+            if (Check(i, j))
             {
-                if (!visited[i][j])
-                    Flower(i, j, iCount + 1, iPrice);
+                Flower(iCount + 1, iSum + SumFlower(i, j));
+                DeleteFlower(i, j);
             }
         }
     }
 
-    for (auto& p : flowerPos)
-        visited[p.first][p.second] = false;
 }
 
 int main()
 {
     ios_base::sync_with_stdio(false);
-    cin.tie(NULL); cout.tie(NULL);
-
+    cin.tie(NULL);    cout.tie(NULL);
     cin >> N;
 
     for (int i = 0; i < N; ++i)
     {
         for (int j = 0; j < N; ++j)
-            cin >> price[i][j];
+            cin >> board[i][j];
     }
 
-    for (int i = 1; i < N - 1; ++i)
-    {
-        for (int j = 1; j < N - 1; ++j)
-        {
-            Flower(i, j, 0, 0);
-        }
-    }
+    Flower(0, 0);
 
     cout << iResult;
 
