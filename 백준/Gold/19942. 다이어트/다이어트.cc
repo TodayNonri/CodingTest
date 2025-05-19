@@ -1,76 +1,80 @@
 #include <iostream>
+#include <algorithm>
 #include <vector>
 #include <climits>
 
 using namespace std;
+int N, iResult = INT_MAX;
+int MinMp, MinMf, MinMs, MinMv;
 
-int N, mp, mf, ms, mv, iMinValue = INT_MAX;
-
-struct tagFood
+struct food
 {
-    int m_mp = 0;
-    int m_mf = 0;
-    int m_ms = 0;
-    int m_mv = 0;
-    int m_credit = 0;
+    int p = 0;
+    int f = 0;
+    int s = 0;
+    int v = 0;
+    int c = 0;
 };
+
+vector<food> v;
 
 int main()
 {
     ios_base::sync_with_stdio(false);
-    cin.tie(NULL); cout.tie(NULL);
+    cin.tie(NULL);    cout.tie(NULL);
 
-    cin >> N >> mp >> mf >> ms >> mv;
+    cin >> N;
 
-    vector<tagFood> vFood(N);
+    v.resize(N);
+    vector<int> vRank;
+    cin>> MinMp >> MinMf >> MinMs >> MinMv;
     for (int i = 0; i < N; ++i)
-        cin >> vFood[i].m_mp >> vFood[i].m_mf >> vFood[i].m_ms >> vFood[i].m_mv >> vFood[i].m_credit;
-
-    vector<int> vResult;
+    {
+        cin >> v[i].p;
+        cin >> v[i].f;
+        cin >> v[i].s;
+        cin >> v[i].v;
+        cin >> v[i].c;
+    }
 
     for (int i = 0; i < (1 << N); ++i)
     {
-        vector<int> vIndex;
-        tagFood sum_Food;
-
+        food resultFood;
+        vector<int> vTemp;
         for (int j = 0; j < N; ++j)
         {
             if (i & (1 << j))
             {
-                sum_Food.m_mp += vFood[j].m_mp;
-                sum_Food.m_mf += vFood[j].m_mf;
-                sum_Food.m_ms += vFood[j].m_ms;
-                sum_Food.m_mv += vFood[j].m_mv;
-                sum_Food.m_credit += vFood[j].m_credit;
-                vIndex.push_back(j);
+                resultFood.p += v[j].p;
+                resultFood.f += v[j].f;
+                resultFood.s += v[j].s;
+                resultFood.v += v[j].v;
+                resultFood.c += v[j].c;
+                vTemp.push_back(j + 1);
             }
         }
-
-        if (sum_Food.m_mp >= mp && sum_Food.m_mf >= mf
-            && sum_Food.m_ms >= ms && sum_Food.m_mv >= mv)
+        if (resultFood.p>=MinMp && resultFood.f >= MinMf && resultFood.s >= MinMs && resultFood.v >= MinMv && iResult >= resultFood.c)
         {
-            if (sum_Food.m_credit < iMinValue ||
-                (sum_Food.m_credit == iMinValue && vIndex < vResult))
+            if (iResult > resultFood.c)
             {
-                iMinValue = sum_Food.m_credit;
-                vResult = vIndex;
+                iResult = resultFood.c;
+                vRank = vTemp;
+            }
+            else
+            {
+                if (vRank > vTemp)
+                    vRank = vTemp;
             }
         }
     }
-
-    if (vResult.empty())
+    if (iResult == INT_MAX)
     {
         cout << -1;
         return 0;
     }
-
-    cout << iMinValue << "\n";
-
-    for (size_t i = 0; i < vResult.size(); ++i)
-    {
-        cout << vResult[i] + 1;
-        if (i < vResult.size() - 1) cout << " ";
-    }
+    cout << iResult<<"\n";
+    for (auto& i : vRank)
+        cout << i<< " ";
 
     return 0;
 }
