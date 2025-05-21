@@ -1,55 +1,67 @@
 #include <iostream>
+#include <algorithm>
 #include <vector>
 #include <climits>
-#include <string>
 
 using namespace std;
+int N, iResult = INT_MAX;
+int board[21];
 
-int N, Coin[44], iResult = INT_MAX;
-
-void CheckSwap(int iHere)
+int Check()
 {
-	if (iHere == N + 1)
-	{
-		int iSum = 0;
-		for (int i = 1; i < (1 << (N)); i *= 2)
-		{
-			int iCount = 0;
-			for (int j = 1; j <= N; ++j)
-				if (Coin[j] & i)
-					iCount++;
+    int iResult = 0;
+    for (int i = 0; i < N; ++i)
+    {
 
-			iSum += min(iCount, N - iCount);
-		}
-		iResult = min(iResult, iSum);
-		return;
-	}
+    }
+    return iResult;
+}
 
-	CheckSwap(iHere + 1);
-	Coin[iHere] = ~Coin[iHere];
-	CheckSwap(iHere + 1);
+void Go(int iHere)
+{
+    if (iHere == N+1)
+    {
+        int iSum = 0;
+        for (int i = 1; i < (1 << N) - 1; i*=2)
+        {
+            int iCount = 0;
+            for (int j = 1; j <= N; ++j)
+            {
+                if (board[j] & i)
+                    ++iCount;
+            }
+            iSum += min(iCount, N - iCount);
+        }
+        iResult = min(iResult, iSum);
+        return;
+    }
+    Go(iHere + 1);
+    board[iHere] = ~board[iHere];
+    Go(iHere + 1);
 }
 
 int main()
 {
-	ios_base::sync_with_stdio(false);
-	cin.tie(NULL); cout.tie(NULL);
-	cin >> N;
-	string strInput;
-	for (int i = 1; i <= N; ++i)
-	{
-		cin>>strInput;
-		int iValue = 1;
-		for (int j = 0; j < N; ++j)
-		{
-			if (strInput[j] == 'T')
-				Coin[i] |= iValue;
-			iValue *= 2;
-		}
-	}
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);    cout.tie(NULL);
 
-	CheckSwap(1);
-	cout << iResult;
+    cin >> N;
 
-	return 0;
+    string strInput;
+    for (int i = 1; i <= N; ++i)
+    {
+        cin >> strInput;
+        int iValue = 1;
+        for (int j = 0; j < N; ++j)
+        {
+            if (strInput[j] == 'T')
+                board[i] |= iValue;
+            iValue *= 2;
+        }
+    }
+
+    Go(1);
+
+    cout << iResult;
+    return 0;
 }
